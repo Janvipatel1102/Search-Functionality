@@ -3,6 +3,7 @@ package com.example.mysearchactivity;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -73,8 +74,23 @@ public class searchDialog extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
+
+                String searchQuery = "";
+                if(categories.contains(query))
+                {
+                    searchQuery = "categories "+query;
+                }
+                else
+                {
+                    searchQuery = "items "+query;
+                }
+
+                Intent intent = new Intent(getApplicationContext(), searchresult.class);
+                intent.setAction(Intent.ACTION_SEARCH);
+                intent.putExtra("query", searchQuery);
                 searchView.setQuery(null,false);
-                return false;
+                startActivity(intent);
+                return true;
             }
 
             @Override
@@ -87,52 +103,6 @@ public class searchDialog extends AppCompatActivity {
                     itemNames(searchQuery);
                     categoryNames(searchQuery);
 
-                  /*  totalSuggestion.clear();
-                    totalSuggestion.addAll(itemNames);
-                    totalSuggestion.addAll(categories);
-
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.suggestion_item, totalSuggestion);
-                    searchAutoComplete.setAdapter(adapter);
-                    searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            // Your code for onitemclick
-                            String s = totalSuggestion.get(position);
-                            searchAutoComplete.setAdapter(null);
-                            searchView.setQuery(s,true);
-
-                        }
-                    });*/
-
-
-
-
-                /*    categoryWiseViewModel.getNameByName(searchQuery).observe(searchDialog.this, new Observer<List<String>>() {
-                        @Override
-                        public void onChanged(@Nullable final List<String> categories) {
-
-                            List<String> nameList = categories;
-                            nameList.add("Hello");
-                            nameList.add("world");
-                            nameList.add("Hey");
-                            nameList.add("Hi");
-
-                            List<String> str = new ArrayList<>();
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.suggestion_item, nameList);
-
-                            searchAutoComplete.setAdapter(adapter);
-                            searchAutoComplete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    // Your code for onitemclick
-                                    String s = nameList.get(position);
-                                    searchAutoComplete.setAdapter(null);
-                                    searchView.setQuery(s,true);
-
-                                }
-                            });
-                        }
-                    });*/
                 }
                 return true;
             }
@@ -184,6 +154,16 @@ public class searchDialog extends AppCompatActivity {
                 // Your code for onitemclick
                 String s = totalSuggestion.get(position);
                 searchAutoComplete.setAdapter(null);
+              /*  String searchQuery = "";
+                if(categories.contains(s))
+                {
+                    searchQuery = "categories "+s;
+                }
+                else
+                {
+                    searchQuery = "items "+s;
+                }*/
+
                 searchView.setQuery(s,true);
 
             }
