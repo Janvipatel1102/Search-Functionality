@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.example.mysearchactivity.adapters.categoryAdapter;
 import com.example.mysearchactivity.adapters.categoryWiseAdapter;
@@ -45,14 +47,16 @@ public class searchresult<async> extends AppCompatActivity {
     private  categoryViewModel categoryViewModel;
      categoryWiseAdapter adapter;
      List<String> allCategories = new ArrayList<>();
+    RecyclerView recyclerView;
+    TextView emptyView;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchresult);
 
-
-        RecyclerView recyclerView = findViewById(R.id.itemrecyclerview);
+        emptyView = (TextView) findViewById(R.id.empty_view);
+         recyclerView = findViewById(R.id.itemrecyclerview);
         adapter = new categoryWiseAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -66,7 +70,7 @@ public class searchresult<async> extends AppCompatActivity {
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
           String  query = intent.getStringExtra("query");
-            Log.d(String.valueOf(searchresult.this),query);
+          Log.d(String.valueOf(searchresult.this),query);
 
           doMySearch(query);
         }
@@ -81,21 +85,41 @@ public class searchresult<async> extends AppCompatActivity {
         if(tag .equals("categories"))
         {
 
-            Log.d(String.valueOf(searchresult.this),"In Category items ");
-
             categoryWiseViewModel.getItemByCategory("%"+query+"%").observe(this, new Observer<List<CategoryWiseItems>>() {
                 @Override
                 public void onChanged(List<CategoryWiseItems> categoryWiseItems) {
+
+                    if(categoryWiseItems.size()==0)
+                    {
+                        recyclerView.setVisibility(View.GONE);
+                        emptyView.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        recyclerView.setVisibility(View.VISIBLE);
+                        emptyView.setVisibility(View.GONE);
+                    }
+                    Log.d(String.valueOf(searchresult.this),"Size of category "+String.valueOf(categoryWiseItems.size()));
                     adapter.setCategory(categoryWiseItems);
                 }
             });
         }
         else {
-            Log.d(String.valueOf(searchresult.this),"In Items items ");
+           // Log.d(String.valueOf(searchresult.this),"In Items items ");
             categoryWiseViewModel.getItemByName("%" + query + "%").observe(this, new Observer<List<CategoryWiseItems>>() {
                     @Override
                     public void onChanged(@Nullable final List<CategoryWiseItems> categories) {
                         // Update the cached copy of the words in the adapter.
+                        if(categories.size()==0)
+                        {
+                            recyclerView.setVisibility(View.GONE);
+                            emptyView.setVisibility(View.VISIBLE);
+                        }
+                        else
+                        {
+                            recyclerView.setVisibility(View.VISIBLE);
+                            emptyView.setVisibility(View.GONE);
+                        }
                         adapter.setCategory(categories);
 
                     }
@@ -103,5 +127,5 @@ public class searchresult<async> extends AppCompatActivity {
             }
 
        }
-       
+
 }
