@@ -13,6 +13,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = Constants.CATEGORIES_TABLE_NAME)
 public class categories {
 
+    
     @PrimaryKey(autoGenerate = true)
     private Integer category_id;
 
@@ -23,18 +24,16 @@ public class categories {
         this.category_id = category_id;
     }
 
-    @ColumnInfo(name = "image_url")
-    private String image_url;
 
     @Ignore
-public categories()
-{
+        public categories()
+        {
 
-}
+        }
 
-    public categories(String name, String image_url) {
+    public categories(String name) {
         this.name = name;
-        this.image_url = image_url;
+
     }
 
     @NonNull
@@ -47,16 +46,12 @@ public categories()
         this.name = name;
     }
 
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
-    }
+
 
     public String getName() {
         return name;
     }
 
-    public String getImage_url() {
-        return image_url;
-    }
+
 
 }

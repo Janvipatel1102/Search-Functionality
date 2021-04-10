@@ -13,6 +13,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+
 @Dao
 public interface categoryDao {
 
@@ -31,10 +32,10 @@ public interface categoryDao {
     @Query("DELETE FROM "+ Constants.CATEGORIES_TABLE_NAME)
     void deleteAllCategories();
 
-    @Query("SELECT * FROM "+ Constants.CATEGORIES_TABLE_NAME)
+    @Query("SELECT * FROM "+ Constants.CATEGORIES_TABLE_NAME+" ORDER BY category_id")
     LiveData<List<categories>> getAllCategories();
 
-    @Query("SELECT category_name FROM "+ Constants.CATEGORIES_TABLE_NAME)
+    @Query("SELECT category_name FROM "+ Constants.CATEGORIES_TABLE_NAME + " ORDER BY category_name")
     LiveData<List<String>> getAllCategoriesNames();
 
 

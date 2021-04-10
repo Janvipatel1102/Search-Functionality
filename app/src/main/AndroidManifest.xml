@@ -12,12 +12,12 @@
         <activity android:name=".searchresult"
             android:label="Search Activity">
 
-            <intent-filter>
+           <!-- <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data android:name="android.app.searchable"
                 android:resource="@xml/searchble"/>
-
+-->
         </activity>
         <activity android:name=".MainActivity">
 
@@ -29,11 +29,12 @@
         </activity>
 
         <activity android:name=".searchDialog"
-            android:label="">
+            android:theme="@style/Theme.MysearchDialog"
+            android:label="Search Product">
 
-            <meta-data android:name="android.app.default_searchable"
+           <!-- <meta-data android:name="android.app.default_searchable"
                 android:value=".searchresult" />
-
+-->
         </activity>
       </application>
 

@@ -57,17 +57,8 @@ public class CategoryWiseItems {
         this.deliveryDuration = deliveryDuration;
     }
 
-      @ColumnInfo(name = "image_url")
-        private String image_url;
 
 
-    public String getImage_url() {
-        return image_url;
-    }
-
-    public void setImage_url(String image_url) {
-        this.image_url = image_url;
-    }
 
     public String getOther_sizes() {
         return other_sizes;
@@ -104,9 +95,8 @@ public class CategoryWiseItems {
 
     }
 
-    public CategoryWiseItems( String item_name, String discount, String ratingCount, String rating, String price, String size, boolean instock,String description,String deliveryDuration,String category_of_item ,String image_url,String other_sizes) {
+    public CategoryWiseItems( String item_name, String discount, String ratingCount, String rating, String price, String size, boolean instock,String description,String deliveryDuration,String category_of_item ,String other_sizes) {
         this.item_name = item_name;
-        //this.image_url = image_url;
         this.discount = discount;
         this.ratingCount = ratingCount;
         this.rating = rating;
@@ -117,7 +107,7 @@ public class CategoryWiseItems {
         this.category_of_item = category_of_item;
         this.description = description;
         this.other_sizes  = other_sizes;
-        this.image_url = image_url;
+
     }
 
     @NonNull
@@ -143,13 +133,6 @@ public class CategoryWiseItems {
         item_name = name;
     }
 
-   /* public String getImage_url() {
-        return image_url;
-    }
-
-    public void setImage_url(String  image_url) {
-        this.image_url = image_url;
-    }*/
 
     public String getDiscount() {
         return discount;

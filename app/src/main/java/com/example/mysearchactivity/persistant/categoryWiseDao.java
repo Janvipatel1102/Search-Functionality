@@ -36,12 +36,12 @@ public interface categoryWiseDao {
     @Query("SELECT * FROM "+ Constants.CATEGORIESWISE_TABLE_NAME)
     LiveData<List<CategoryWiseItems>> getAllCategoryWiseItem();
 
-    @Query("SELECT * FROM " + Constants.CATEGORIESWISE_TABLE_NAME + " WHERE item_name LIKE :query")
-    LiveData<List<CategoryWiseItems>> getItemByName(String query);
+    @Query("SELECT * FROM " + Constants.CATEGORIESWISE_TABLE_NAME + " WHERE item_name LIKE :query LIMIT :limit OFFSET :offset ")
+    LiveData<List<CategoryWiseItems>> getItemByName(String query,int limit,int offset);
 
     @Query("SELECT item_name FROM " + Constants.CATEGORIESWISE_TABLE_NAME + " WHERE item_name LIKE :query")
     LiveData<List<String>> getNameByName(String query);
 
-    @Query("SELECT * FROM " + Constants.CATEGORIESWISE_TABLE_NAME + " WHERE category_of_item LIKE :query")
-    LiveData<List<CategoryWiseItems>> getItemByCategories(String query);
+    @Query("SELECT * FROM " + Constants.CATEGORIESWISE_TABLE_NAME + " WHERE category_of_item LIKE :query LIMIT :limit OFFSET :offset")
+    LiveData<List<CategoryWiseItems>> getItemByCategories(String query,int limit,int offset);
 }

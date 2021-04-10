@@ -8,6 +8,7 @@
         android:id="@+id/search_bar"
         android:title="Search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="ifRoom|withText"
-        tools:ignore="MissingClass" />
+        app:showAsAction="always"
+        tools:ignore="MissingClass"
+        />
 </menu>

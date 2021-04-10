@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.reactivex.Observable;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -55,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("categories");
-
-
         mcategoryViewModel = new ViewModelProvider(this).get(categoryViewModel.class);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject obj = new JSONObject(value);
                         try {
                             String name = obj.getString("name");
-                            String  ImageUrl = obj.getString("photosUrl");
+                         //   String  ImageUrl = obj.getString("photosUrl");
                             String  other_sizes = obj.getString("otherSizes");
 
                             String discount = obj.getString("discount");
@@ -128,9 +127,7 @@ public class MainActivity extends AppCompatActivity {
                             String deliveryDuration = obj.getString("deliveryDuration");
                             String description = obj.getString("description");
 
-
-
-                            CategoryWiseItems category = new CategoryWiseItems(name, discount,ratingCount,rating,price,size,instock,description,deliveryDuration,category_of_item,ImageUrl,other_sizes);
+                            CategoryWiseItems category = new CategoryWiseItems(name, discount,ratingCount,rating,price,size,instock,description,deliveryDuration,category_of_item,other_sizes);
                             mcategoryWiseViewModel.insert(category);
 
                         } catch (JSONException e) {
@@ -171,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
 
     }
 }

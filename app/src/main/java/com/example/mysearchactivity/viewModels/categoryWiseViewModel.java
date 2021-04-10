@@ -1,6 +1,7 @@
 package com.example.mysearchactivity.viewModels;
 
 import android.app.Application;
+import android.content.ClipboardManager;
 import android.database.Cursor;
 
 import com.example.mysearchactivity.model.CategoryWiseItems;
@@ -31,13 +32,13 @@ public class categoryWiseViewModel extends AndroidViewModel {
 
     public void deletAllCategoryWiseItems() { mRepository.deleteAll(); }
 
-  public LiveData<List<CategoryWiseItems>> getItemByName(String query)
+  public LiveData<List<CategoryWiseItems>> getItemByName(String query,int limit,int offset)
    {
-       return  mRepository.getItemByName(query);
+       return  mRepository.getItemByName(query,limit,offset);
    }
-    public LiveData<List<CategoryWiseItems>> getItemByCategory(String query)
+    public LiveData<List<CategoryWiseItems>> getItemByCategory(String query,int limit,int offset)
     {
-        return  mRepository.getItemByCategories(query);
+        return  mRepository.getItemByCategories(query,limit,offset );
     }
 
     public LiveData<List<String>> getNameByName(String query)

@@ -49,17 +49,26 @@ public class searchresult<async> extends AppCompatActivity {
      List<String> allCategories = new ArrayList<>();
     RecyclerView recyclerView;
     TextView emptyView;
+    int offset = 0;
+    int limit = Constants.Limit;
+    private boolean loading = true;
+    int pastVisiblesItems, visibleItemCount, totalItemCount;
+    String query;
+    LinearLayoutManager mLayoutManager;
 
-     @Override
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchresult);
 
         emptyView = (TextView) findViewById(R.id.empty_view);
-         recyclerView = findViewById(R.id.itemrecyclerview);
+        recyclerView = findViewById(R.id.itemrecyclerview);
         adapter = new categoryWiseAdapter(this);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mLayoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(mLayoutManager);
 
         categoryWiseViewModel = new ViewModelProvider(this).get(categoryWiseViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(categoryViewModel.class);
@@ -69,15 +78,14 @@ public class searchresult<async> extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-          String  query = intent.getStringExtra("query");
+            query = intent.getStringExtra("query");
           Log.d(String.valueOf(searchresult.this),query);
-
-          doMySearch(query);
+          doMySearch(query,limit,offset);
         }
 
     }
 
-    public  void doMySearch(String Query)
+    public  void doMySearch(String Query,int limit,int offset)
     {
 
         String tag = Query.split(" ")[0];
@@ -85,7 +93,7 @@ public class searchresult<async> extends AppCompatActivity {
         if(tag .equals("categories"))
         {
 
-            categoryWiseViewModel.getItemByCategory("%"+query+"%").observe(this, new Observer<List<CategoryWiseItems>>() {
+            categoryWiseViewModel.getItemByCategory("%"+query+"%",limit,offset).observe(this, new Observer<List<CategoryWiseItems>>() {
                 @Override
                 public void onChanged(List<CategoryWiseItems> categoryWiseItems) {
 
@@ -106,7 +114,7 @@ public class searchresult<async> extends AppCompatActivity {
         }
         else {
            // Log.d(String.valueOf(searchresult.this),"In Items items ");
-            categoryWiseViewModel.getItemByName("%" + query + "%").observe(this, new Observer<List<CategoryWiseItems>>() {
+            categoryWiseViewModel.getItemByName("%" + query + "%",limit,offset).observe(this, new Observer<List<CategoryWiseItems>>() {
                     @Override
                     public void onChanged(@Nullable final List<CategoryWiseItems> categories) {
                         // Update the cached copy of the words in the adapter.
@@ -126,6 +134,34 @@ public class searchresult<async> extends AppCompatActivity {
                 });
             }
 
+       }
+
+       public void fetchDataOnScrolling()
+       {
+
+           recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+               @Override
+               public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                   if (dy > 0) {
+                       //check for scroll down
+                       visibleItemCount = mLayoutManager.getChildCount();
+                       totalItemCount = mLayoutManager.getItemCount();
+                       pastVisiblesItems = mLayoutManager.findFirstVisibleItemPosition();
+
+                       if (loading) {
+                           if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                               loading = false;
+                               Log.v("...", "Last Item Wow !");
+                               offset+=limit;
+                               doMySearch(query,limit,offset);
+                               // Do pagination.. i.e. fetch new data
+
+                               loading = true;
+                           }
+                       }
+                   }
+               }
+           });
        }
 
 }
