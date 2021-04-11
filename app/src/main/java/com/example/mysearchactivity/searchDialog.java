@@ -78,6 +78,7 @@ public class searchDialog extends AppCompatActivity {
 
     suggetion_adapter suggetion_adapter;
     RecyclerView recyclerView;
+    Intent intent;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,6 +91,9 @@ public class searchDialog extends AppCompatActivity {
         categoryWiseViewModel = new ViewModelProvider(this).get(categoryWiseViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(categoryViewModel.class);
      //   suggetion_adapter.setSuggestions(null);
+
+         intent = getIntent();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
     }
 
@@ -105,9 +109,10 @@ public class searchDialog extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false); // Do not iconify t
 
-        EditText editText = ((EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text));
+        editText = ((EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text));
         editText.setHintTextColor(getResources().getColor(R.color.grey3));
         editText.setTextColor(getResources().getColor(R.color.dark_grey));
+
 
 
         ImageView searchCloseIcon = (ImageView)searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
@@ -117,9 +122,17 @@ public class searchDialog extends AppCompatActivity {
         ImageView searchIcon = (ImageView)searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
         searchIcon.setImageResource(R.drawable.ic_search_black_24dp);
         searchIcon.setColorFilter(getResources().getColor(R.color.grey3));
+
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
         observableFunction();
+
+        if (Intent.ACTION_GET_CONTENT.equals(intent.getAction())) {
+            String s  = intent.getStringExtra("query");
+            Log.d(String.valueOf(searchDialog.this),s);
+
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -144,7 +157,7 @@ public class searchDialog extends AppCompatActivity {
                             searchQuery = "items "+query;
                         }
 
-                        suggetion_adapter.setSuggestions(null);
+                        totalSuggestion.clear();
                         Intent intent = new Intent(getApplicationContext(), searchresult.class);
                         intent.setAction(Intent.ACTION_SEARCH);
                         intent.putExtra("query", searchQuery);
@@ -177,8 +190,10 @@ public class searchDialog extends AppCompatActivity {
             @Override
             public void onNext(@NonNull String s) {
 
-                if(s!=null)
+                Log.d(String.valueOf(searchDialog.this),"String = "+(s.isEmpty()==false && s!=null) );
+                if(s != null && (s.isEmpty()==false))
                 {
+
                     //  handler.removeCallbacks(runnable);
                     String searchQuery = "%"+s+"%";
                     handler.post(new Runnable() {
@@ -188,12 +203,11 @@ public class searchDialog extends AppCompatActivity {
 
                         }
                     });
-                    Log.d(String.valueOf(searchDialog.this),s+String.valueOf(count));
-
                 }
                 else
                 {
-                    suggetion_adapter.setSuggestions(null);
+                    totalSuggestion.clear();
+
                 }
 
             }
@@ -252,14 +266,14 @@ public class searchDialog extends AppCompatActivity {
                 String s = totalSuggestion.get(position);
                 Log.d(String.valueOf(searchDialog.this),"String = "+ s);
                 String searchQuery = "";
-                if(categories.contains(s))
+               /* if(categories.contains(s))
                 {
                     searchQuery = "categories "+s;
                 }
                 else
                 {
                     searchQuery = "items "+s;
-                }
+                }*/
                 searchView.setQuery(s,true);
             }
         });
@@ -273,4 +287,12 @@ public class searchDialog extends AppCompatActivity {
         disposable.dispose();
 
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent startMain = new Intent(searchDialog.this,MainActivity.class);
+        startActivity(startMain);
+        finish();
+    }
+
 }

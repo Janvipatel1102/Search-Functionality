@@ -21,55 +21,15 @@ public class CategoryWiseItems {
     @PrimaryKey(autoGenerate =   true)
     private Integer id;
 
+
+    @ColumnInfo(name = "item_id")
+    private String item_id;
+
     @ColumnInfo(name = "item_name")
     private String item_name;
 
     @ColumnInfo(name = "category_of_item")
     private  String category_of_item;
-
-    @ColumnInfo(name = "description")
-    private  String description;
-
-    @ColumnInfo(name = "deliveryDuration")
-    private  String deliveryDuration;
-
-    public String getCategory_of_item() {
-        return category_of_item;
-    }
-
-    public void setCategory_of_item(String category_of_item) {
-        this.category_of_item = category_of_item;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getDeliveryDuration() {
-        return deliveryDuration;
-    }
-
-    public void setDeliveryDuration(String deliveryDuration) {
-        this.deliveryDuration = deliveryDuration;
-    }
-
-
-
-
-    public String getOther_sizes() {
-        return other_sizes;
-    }
-
-    public void setOther_sizes(String other_sizes) {
-        this.other_sizes = other_sizes;
-    }
-
-    @ColumnInfo(name = "other_sizes")
-    private String other_sizes;
 
     @ColumnInfo(name = "discount")
     private String discount;
@@ -83,11 +43,12 @@ public class CategoryWiseItems {
     @ColumnInfo(name = "price")
     private String price;
 
-    @ColumnInfo(name = "size")
-    private String size;
 
-    @ColumnInfo(name = "inStock")
-    private  boolean instock;
+    @ColumnInfo(name = "image_url")
+    private String image_url;
+
+
+
 
     @Ignore
     public CategoryWiseItems()
@@ -95,18 +56,16 @@ public class CategoryWiseItems {
 
     }
 
-    public CategoryWiseItems( String item_name, String discount, String ratingCount, String rating, String price, String size, boolean instock,String description,String deliveryDuration,String category_of_item ,String other_sizes) {
+    public CategoryWiseItems( String item_id,String item_name, String discount, String ratingCount, String rating, String price,String category_of_item ,String image_url)
+    {
+        this.item_id =item_id;
         this.item_name = item_name;
         this.discount = discount;
         this.ratingCount = ratingCount;
         this.rating = rating;
         this.price = price;
-        this.size = size;
-        this.instock = instock;
-        this.deliveryDuration = deliveryDuration;
         this.category_of_item = category_of_item;
-        this.description = description;
-        this.other_sizes  = other_sizes;
+        this.image_url =image_url;
 
     }
 
@@ -114,6 +73,24 @@ public class CategoryWiseItems {
     public Integer getId() {
         return id;
     }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
+    }
+
+
+    public String getCategory_of_item() {
+        return category_of_item;
+    }
+
+    public void setCategory_of_item(String category_of_item) {
+        this.category_of_item = category_of_item;
+    }
+
 
     public void setId(Integer id) {
         this.id = id;
@@ -167,19 +144,11 @@ public class CategoryWiseItems {
         this.price = price;
     }
 
-    public String getSize() {
-        return size;
+    public String getItem_id() {
+        return item_id;
     }
 
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public boolean isInstock() {
-        return instock;
-    }
-
-    public void setInstock(boolean instock) {
-        this.instock = instock;
+    public void setItem_id(String item_id) {
+        this.item_id = item_id;
     }
 }

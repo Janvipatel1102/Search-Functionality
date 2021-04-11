@@ -36,8 +36,11 @@ import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.util.List;
 import java.util.Map;
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerview);
+       /* RecyclerView recyclerView = findViewById(R.id.recyclerview);
         final categoryAdapter adapter = new categoryAdapter(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                adapter.setCategory(categories);
 
             }
-        });
+        });*/
 
 
 
@@ -115,19 +118,20 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject obj = new JSONObject(value);
                         try {
                             String name = obj.getString("name");
-                         //   String  ImageUrl = obj.getString("photosUrl");
-                            String  other_sizes = obj.getString("otherSizes");
-
+                            String  ImageUrl = obj.getString("photosUrl");
                             String discount = obj.getString("discount");
                             String ratingCount = obj.getString("peopleRatingCount");
                             String rating = obj.getString("ratingTotal");
                             String price = obj.getString("price");
-                            String size = obj.getString("size");
-                            boolean instock = obj.getBoolean("inStock");
-                            String deliveryDuration = obj.getString("deliveryDuration");
-                            String description = obj.getString("description");
+                            String item_id =obj.getString("key");
 
-                            CategoryWiseItems category = new CategoryWiseItems(name, discount,ratingCount,rating,price,size,instock,description,deliveryDuration,category_of_item,other_sizes);
+                            JSONParser parser = new JSONParser();
+                            JSONArray array = new JSONArray(ImageUrl);
+                            String image =array.getString(0);
+                            Log.d(String.valueOf(MainActivity.this),image);
+
+
+                            CategoryWiseItems category = new CategoryWiseItems(item_id,name, discount,ratingCount,rating,price,category_of_item,image);
                             mcategoryWiseViewModel.insert(category);
 
                         } catch (JSONException e) {

@@ -30,7 +30,11 @@
 
         <activity android:name=".searchDialog"
             android:theme="@style/Theme.MysearchDialog"
-            android:label="Search Product">
+            android:label="Search Product"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
 
            <!-- <meta-data android:name="android.app.default_searchable"
                 android:value=".searchresult" />
