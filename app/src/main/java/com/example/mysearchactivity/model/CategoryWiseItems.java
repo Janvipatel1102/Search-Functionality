@@ -34,7 +34,7 @@ public class CategoryWiseItems {
     private  String category_of_item;
 
     @ColumnInfo(name = "discount")
-    private String discount;
+    private Float discount;
 
     @ColumnInfo(name = "rating_count")
     private String ratingCount;
@@ -49,6 +49,16 @@ public class CategoryWiseItems {
     @ColumnInfo(name = "image_url")
     private String image_url;
 
+    @ColumnInfo(name = "in_stock")
+    private boolean in_stock;
+
+    public boolean isIn_stock() {
+        return in_stock;
+    }
+
+    public void setIn_stock(boolean in_stock) {
+        this.in_stock = in_stock;
+    }
 
     @Ignore
     public CategoryWiseItems()
@@ -56,7 +66,7 @@ public class CategoryWiseItems {
 
     }
 
-    public CategoryWiseItems( String item_id,String item_name, String discount, String ratingCount, Float rating, String price,String category_of_item ,String image_url,Float price_with_discount)
+    public CategoryWiseItems( String item_id,String item_name, Float discount, String ratingCount, Float rating, String price,String category_of_item ,String image_url,Float price_with_discount,boolean in_stock)
     {
         this.item_id =item_id;
         this.item_name = item_name;
@@ -67,6 +77,7 @@ public class CategoryWiseItems {
         this.category_of_item = category_of_item;
         this.image_url =image_url;
         this.price_with_discount = price_with_discount;
+        this.in_stock = in_stock;
 
     }
 
@@ -121,11 +132,11 @@ public class CategoryWiseItems {
     }
 
 
-    public String getDiscount() {
+    public Float getDiscount() {
         return discount;
     }
 
-    public void setDiscount(String  discount) {
+    public void setDiscount(Float  discount) {
         this.discount = discount;
     }
 

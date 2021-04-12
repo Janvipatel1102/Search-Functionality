@@ -32,13 +32,13 @@ public class categoryWiseViewModel extends AndroidViewModel {
 
     public void deletAllCategoryWiseItems() { mRepository.deleteAll(); }
 
-  public LiveData<List<CategoryWiseItems>> getItemByName(String query,int limit,int offset)
+  public LiveData<List<CategoryWiseItems>> getItemByName(String query)
    {
-       return  mRepository.getItemByName(query,limit,offset);
+       return  mRepository.getItemByName(query);
    }
-    public LiveData<List<CategoryWiseItems>> getItemByCategory(String query,int limit,int offset)
+    public LiveData<List<CategoryWiseItems>> getItemByCategory(String query)
     {
-        return  mRepository.getItemByCategories(query,limit,offset );
+        return  mRepository.getItemByCategories(query);
     }
 
     public LiveData<List<String>> getNameByName(String query)

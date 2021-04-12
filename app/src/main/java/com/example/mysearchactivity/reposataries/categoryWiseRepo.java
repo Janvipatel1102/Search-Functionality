@@ -30,12 +30,12 @@ public class categoryWiseRepo<firebaseDatabase> {
     public LiveData<List<CategoryWiseItems>> getmAllCategoryWiseItems() {
         return mAllCategoryWiseItems;
     }
-    public LiveData<List<CategoryWiseItems>> getItemByName(String query,int limit,int offset) {
-        nameWiseItems  = mcategoryWiseDao.getItemByName(query,limit,offset);
+    public LiveData<List<CategoryWiseItems>> getItemByName(String query) {
+        nameWiseItems  = mcategoryWiseDao.getItemByName(query);
         return  nameWiseItems;
     }
-    public LiveData<List<CategoryWiseItems>> getItemByCategories(String query,int limit,int offset) {
-         mItemByCategory  = mcategoryWiseDao.getItemByCategories(query,limit,offset);
+    public LiveData<List<CategoryWiseItems>> getItemByCategories(String query) {
+         mItemByCategory  = mcategoryWiseDao.getItemByCategories(query);
         return  mItemByCategory;
     }
 

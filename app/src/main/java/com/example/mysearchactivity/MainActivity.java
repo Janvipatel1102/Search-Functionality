@@ -119,13 +119,15 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             String name = obj.getString("name");
                             String  ImageUrl = obj.getString("photosUrl");
-                            String discount = obj.getString("discount");
+                            Float discount = (float)obj.getDouble("discount");
                             String ratingCount = obj.getString("peopleRatingCount");
                             Float rating = (float) obj.getDouble("ratingTotal");
                             String price = obj.getString("price");
                             String item_id =obj.getString("key");
+                            boolean in_stock = obj.getBoolean("inStock");
 
-                            JSONParser parser = new JSONParser();
+
+                                    JSONParser parser = new JSONParser();
                             JSONArray array = new JSONArray(ImageUrl);
                             String image =array.getString(0);
                             Log.d(String.valueOf(MainActivity.this),image);
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                             Float price1 = Float.valueOf(price);
                             Float price_with_discount = price1 - ((price1*discount1)/100);
 
-                            CategoryWiseItems category = new CategoryWiseItems(item_id,name, discount,ratingCount,rating,price,category_of_item,image,price_with_discount);
+                            CategoryWiseItems category = new CategoryWiseItems(item_id,name, discount,ratingCount,rating,price,category_of_item,image,price_with_discount,in_stock);
                             mcategoryWiseViewModel.insert(category);
 
                         } catch (JSONException e) {

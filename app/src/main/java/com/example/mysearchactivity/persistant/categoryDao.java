@@ -39,7 +39,7 @@ public interface categoryDao {
     LiveData<List<String>> getAllCategoriesNames();
 
 
-    @Query("SELECT category_name FROM "+ Constants.CATEGORIES_TABLE_NAME +" WHERE category_name LIKE :Query ")
+    @Query("SELECT category_name FROM "+ Constants.CATEGORIES_TABLE_NAME +" WHERE category_name LIKE :Query ORDER BY category_name")
     LiveData<List<String>> getCategoryByName(String Query);
 
 
