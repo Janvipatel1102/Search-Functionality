@@ -21,6 +21,8 @@ public class CategoryWiseItems {
     @PrimaryKey(autoGenerate =   true)
     private Integer id;
 
+    @ColumnInfo(name = "price_with_discount")
+    private Float price_with_discount;
 
     @ColumnInfo(name = "item_id")
     private String item_id;
@@ -38,7 +40,7 @@ public class CategoryWiseItems {
     private String ratingCount;
 
     @ColumnInfo(name = "rating")
-    private String rating;
+    private Float rating;
 
     @ColumnInfo(name = "price")
     private String price;
@@ -48,15 +50,13 @@ public class CategoryWiseItems {
     private String image_url;
 
 
-
-
     @Ignore
     public CategoryWiseItems()
     {
 
     }
 
-    public CategoryWiseItems( String item_id,String item_name, String discount, String ratingCount, String rating, String price,String category_of_item ,String image_url)
+    public CategoryWiseItems( String item_id,String item_name, String discount, String ratingCount, Float rating, String price,String category_of_item ,String image_url,Float price_with_discount)
     {
         this.item_id =item_id;
         this.item_name = item_name;
@@ -66,6 +66,7 @@ public class CategoryWiseItems {
         this.price = price;
         this.category_of_item = category_of_item;
         this.image_url =image_url;
+        this.price_with_discount = price_with_discount;
 
     }
 
@@ -73,6 +74,15 @@ public class CategoryWiseItems {
     public Integer getId() {
         return id;
     }
+
+    public Float getPrice_with_discount() {
+        return price_with_discount;
+    }
+
+    public void setPrice_with_discount(Float price_with_discount) {
+        this.price_with_discount = price_with_discount;
+    }
+
 
     public String getImage_url() {
         return image_url;
@@ -128,11 +138,11 @@ public class CategoryWiseItems {
         this.ratingCount = ratingCount;
     }
 
-    public String getRating() {
+    public Float getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(Float rating) {
         this.rating = rating;
     }
 

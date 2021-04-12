@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                             String  ImageUrl = obj.getString("photosUrl");
                             String discount = obj.getString("discount");
                             String ratingCount = obj.getString("peopleRatingCount");
-                            String rating = obj.getString("ratingTotal");
+                            Float rating = (float) obj.getDouble("ratingTotal");
                             String price = obj.getString("price");
                             String item_id =obj.getString("key");
 
@@ -131,7 +131,11 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(String.valueOf(MainActivity.this),image);
 
 
-                            CategoryWiseItems category = new CategoryWiseItems(item_id,name, discount,ratingCount,rating,price,category_of_item,image);
+                            Float discount1 = Float.valueOf(discount);
+                            Float price1 = Float.valueOf(price);
+                            Float price_with_discount = price1 - ((price1*discount1)/100);
+
+                            CategoryWiseItems category = new CategoryWiseItems(item_id,name, discount,ratingCount,rating,price,category_of_item,image,price_with_discount);
                             mcategoryWiseViewModel.insert(category);
 
                         } catch (JSONException e) {

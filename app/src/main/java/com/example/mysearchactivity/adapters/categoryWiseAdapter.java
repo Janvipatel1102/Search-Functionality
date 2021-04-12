@@ -45,12 +45,9 @@ public class categoryWiseAdapter extends RecyclerView.Adapter<categoryWiseAdapte
             String productname = current.getItem_name();
             String ratingcount = current.getRatingCount();
             String totalexpense ="\u20B9 " +current.getPrice();
-            Float ratings = Float.valueOf(current.getRating());
-
-            Double discount = Double.valueOf(current.getDiscount());
-            Double price = Double.valueOf(current.getPrice());
-            discount = price - ((price*discount)/100);
-            String discount_expense = "\u20B9 "+String.valueOf(discount);
+            Float ratings = current.getRating();
+            String discount_expense = "\u20B9 "+String.valueOf(current.getPrice_with_discount());
+            Log.d(String.valueOf(context),discount_expense);
             String url = current.getImage_url();
 
             holder.product_name.setText(productname);
