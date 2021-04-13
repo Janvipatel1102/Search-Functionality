@@ -88,13 +88,16 @@ public class searchresult<async> extends AppCompatActivity {
     LinearLayout price_filter_layout,discount_filter_layout,rating_filter_layout,avaibility_filter_layout;
 
     CheckBox below_250,between_251_500,between_501_1000,between_1001_2000
-            ,between_2001_5000,between_5001_10000,above_100001,more_then_70,more_then_60,more_then_50,more_then_40
-            ,more_then_30,below_30,above_4,above_3,above_2,above_1,include_out_of_stock,exclude_out_of_stock;
+            ,between_2001_5000,between_5001_10000,above_10001,more_then_70,more_then_60,more_then_50,more_then_40
+            ,more_then_30,below_30,above_4,above_3,above_2,above_1,exclude_out_of_stock;
     Button apply_filter;
     boolean ischecked= false,dis_below_30 = false;
 
 
-    Map<Integer,Integer> map=new HashMap<Integer,Integer>();
+   // Map<Integer,Integer> map=new HashMap<Integer,Integer>();
+
+
+    boolean isPrice_filtered=false,isDiscount_filtered=false,isAvailiability_filtered=false,isCustomoerRating_filtered = false;
 
 
 
@@ -436,7 +439,7 @@ public class searchresult<async> extends AppCompatActivity {
         between_1001_2000 = filterSheetView.findViewById(R.id.between_1001_2000);
         between_2001_5000 = filterSheetView.findViewById(R.id.between_2001_5000);
         between_5001_10000 = filterSheetView.findViewById(R.id.between_5001_10000);
-        above_100001 = filterSheetView.findViewById(R.id.above_10001);
+        above_10001 = filterSheetView.findViewById(R.id.above_10001);
 
         more_then_30 = filterSheetView.findViewById(R.id.more_than_30);
         more_then_40 = filterSheetView.findViewById(R.id.more_than_40);
@@ -537,6 +540,9 @@ public class searchresult<async> extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                categoryWiseItems.clear();
+                categoryWiseItems.addAll(tempCategoryWiseItems);
+
                 if(below_250.isChecked())
                 {
                     ischecked = true;
@@ -582,11 +588,11 @@ public class searchresult<async> extends AppCompatActivity {
                     price_filter_list(5001F,10000F);
 
                 }
-                if(above_100001.isChecked())
+                if(above_10001.isChecked())
                 {
                     ischecked = true;
-                    Toast.makeText(searchresult.this, "between 100001 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(100001F, Float.MAX_VALUE);
+                    Toast.makeText(searchresult.this, "above 100001 ", Toast.LENGTH_SHORT).show();
+                    price_filter_list(10001F, Float.MAX_VALUE);
                 }
 
 
@@ -700,7 +706,12 @@ public class searchresult<async> extends AppCompatActivity {
                 }
                 adapter.notifyDataSetChanged();
                 ischecked=false;
-                map.clear();
+                isPrice_filtered=false;
+                isDiscount_filtered=false;
+                isAvailiability_filtered=false;
+                isCustomoerRating_filtered=false;
+
+              //  map.clear();
             }
         });
 
@@ -715,7 +726,12 @@ public class searchresult<async> extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 ischecked=false;
                 allCheckBoxFalse();
-                map.clear();
+                isPrice_filtered=false;
+                isDiscount_filtered=false;
+                isAvailiability_filtered=false;
+                isCustomoerRating_filtered=false;
+
+                //  map.clear();
             }
         });
 
@@ -729,21 +745,34 @@ public class searchresult<async> extends AppCompatActivity {
     public void price_filter_list(Float min_price,Float max_price)
     {
 
+        if((isAvailiability_filtered) || (isDiscount_filtered) || (isCustomoerRating_filtered))
+        {
+            clearAll();
+        }
         for(int i=0;i<categoryWiseItems.size();i++)
         {
             CategoryWiseItems cartModel = categoryWiseItems.get(i);
             Float price = cartModel.getPrice_with_discount();
-            if((price>=min_price) && (price<=max_price) && (!map.containsKey(i)))
+
+            if((price>=min_price) && (price<=max_price))
             {
-                map.put(i,1);
+               // map.put(i,1);
                 filterCategoryItems.add(cartModel);
             }
 
         }
+        isPrice_filtered=true;
+
     }
 
     public void discount_filter_list(Float discount)
     {
+
+
+        if((isAvailiability_filtered) || (isPrice_filtered) || (isCustomoerRating_filtered))
+        {
+           clearAll();
+        }
 
         for(int i=0;i<categoryWiseItems.size();i++)
         {
@@ -752,20 +781,22 @@ public class searchresult<async> extends AppCompatActivity {
 
             if(dis_below_30)
             {
-                if((discount1<=discount) && (!map.containsKey(i)))
+                if((discount1<=discount))
                 {
-                    map.put(i,1);
+                  //  map.put(i,1);
                     filterCategoryItems.add(cartModel);
                 }
             }
-            else if((discount1>=discount) && (!map.containsKey(i)))
+            else if((discount1>=discount))
             {
-                map.put(i,1);
+              //  map.put(i,1);
                 filterCategoryItems.add(cartModel);
             }
 
         }
         dis_below_30=false;
+        isDiscount_filtered=true;
+
     }
 
 
@@ -773,38 +804,47 @@ public class searchresult<async> extends AppCompatActivity {
     public  void rating_filter_list(Float rating)
     {
 
+        if((isAvailiability_filtered) || (isDiscount_filtered) || (isPrice_filtered))
+        {
+            clearAll();
+        }
+
         for(int i=0;i<categoryWiseItems.size();i++)
         {
             CategoryWiseItems cartModel = categoryWiseItems.get(i);
             Float item_rating = cartModel.getRating();
-            if((item_rating>=rating) && (!map.containsKey(i)))
+            if((item_rating>=rating))
             {
-                map.put(i,1);
+            //    map.put(i,1);
                 filterCategoryItems.add(cartModel);
             }
 
         }
+        isCustomoerRating_filtered=true;
 
     }
 
     public void exclude_out_of_stock_filter_list()
     {
+        if((isCustomoerRating_filtered) || (isDiscount_filtered) || (isPrice_filtered))
+        {
+            clearAll();
+        }
+
         for(int i=0;i<categoryWiseItems.size();i++)
         {
             CategoryWiseItems cartModel = categoryWiseItems.get(i);
             boolean instock = cartModel.isIn_stock();
-            if((!instock) && (!map.containsKey(i)))
+            if((instock))
             {
-                map.put(i,1);
+                //map.put(i,1);
                 filterCategoryItems.add(cartModel);
             }
 
         }
+        isAvailiability_filtered=true;
 
     }
-
-
-
 
     public void allCheckBoxFalse()
     {
@@ -813,6 +853,13 @@ public class searchresult<async> extends AppCompatActivity {
 
     }
 
+    public void clearAll()
+    {
+        categoryWiseItems.clear();
+        categoryWiseItems.addAll(filterCategoryItems);
+        filterCategoryItems.clear();
+   //     map.clear();
+    }
 
 
 }
