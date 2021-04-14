@@ -47,7 +47,7 @@ public class categoryWiseAdapter extends RecyclerView.Adapter<categoryWiseAdapte
             String totalexpense ="\u20B9 " +current.getPrice();
             Float ratings = current.getRating();
             String discount_expense = "\u20B9 "+String.valueOf(current.getPrice_with_discount());
-            Log.d(String.valueOf(context),discount_expense);
+        //    Log.d(String.valueOf(context),discount_expense);
             String url = current.getImage_url();
 
             holder.product_name.setText(productname);
@@ -57,7 +57,7 @@ public class categoryWiseAdapter extends RecyclerView.Adapter<categoryWiseAdapte
             holder.total_expense.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             holder.discount_expense.setText(discount_expense);
 
-            Log.d(String.valueOf(context),url);
+        //    Log.d(String.valueOf(context),url);
             Glide.with(context).load(url)
                     .placeholder(R.drawable.ic_launcher_background).into(holder.imageView);
 

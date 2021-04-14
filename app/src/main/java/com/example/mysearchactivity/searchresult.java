@@ -4,11 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.sqlite.db.SimpleSQLiteQuery;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -17,6 +20,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
+import android.view.KeyboardShortcutGroup;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
@@ -54,6 +59,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class searchresult<async> extends AppCompatActivity {
 
     FirebaseDatabase firebaseDatabase;
@@ -66,11 +72,11 @@ public class searchresult<async> extends AppCompatActivity {
      List<String> allCategories = new ArrayList<>();
      RecyclerView recyclerView;
     TextView emptyView,search_bar;
- //   int offset = 0;
-   // int limit = Constants.Limit;
+    int offset = 0;
+    int limit = Constants.Limit;
     private boolean loading = false;
     int scroll_out_items, visibleItemCount, totalItemCount;
-    String query;
+    String queryWithFlag,query;
     LinearLayoutManager mLayoutManager;
     boolean shouldLoad=true;
     ProgressBar progressBar;
@@ -83,6 +89,22 @@ public class searchresult<async> extends AppCompatActivity {
 
     Button sort_button,filter_button;
 
+    boolean isCategory=false,isFiltered=false;
+
+
+
+    List<Pair<Float,Float>> price_filters_list = new ArrayList<>();
+
+
+    List<Float> discount_filters_list = new ArrayList<>(),
+            rating_filters_list = new ArrayList<>();
+    List<Boolean> isStock_filters_list = new ArrayList<>();
+
+
+    String columnName[] = {"category_of_item","item_name","discount","rating","price_with_discount","in_stock","item_id"};
+
+    SupportSQLiteQuery query1;
+    String column,order = "ASC",sortColumnName = columnName[6];
 
     TextView price_filter,discount_filter,rating_filter,avaliability_filter,clear_filter;
     LinearLayout price_filter_layout,discount_filter_layout,rating_filter_layout,avaibility_filter_layout;
@@ -93,29 +115,7 @@ public class searchresult<async> extends AppCompatActivity {
     Button apply_filter;
     boolean ischecked= false,dis_below_30 = false;
 
-
-   // Map<Integer,Integer> map=new HashMap<Integer,Integer>();
-
-
     boolean isPrice_filtered=false,isDiscount_filtered=false,isAvailiability_filtered=false,isCustomoerRating_filtered = false;
-
-
-
-
-    Comparator<CategoryWiseItems> compareByPrice = new Comparator<CategoryWiseItems>() {
-        @Override
-        public int compare(CategoryWiseItems o1, CategoryWiseItems o2) {
-            return o1.getPrice_with_discount().compareTo(o2.getPrice_with_discount());
-        }
-    };
-
-
-    Comparator<CategoryWiseItems> compareByPopularity = new Comparator<CategoryWiseItems>() {
-        @Override
-        public int compare(CategoryWiseItems o1, CategoryWiseItems o2) {
-            return o1.getRating().compareTo(o2.getRating());
-        }
-    };
 
 
     @Override
@@ -130,6 +130,7 @@ public class searchresult<async> extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         adapter.setCategory(categoryWiseItems);
+
 
         categoryWiseViewModel = new ViewModelProvider(this).get(categoryWiseViewModel.class);
         categoryViewModel = new ViewModelProvider(this).get(categoryViewModel.class);
@@ -154,15 +155,21 @@ public class searchresult<async> extends AppCompatActivity {
 
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            query = intent.getStringExtra("query");
+            queryWithFlag = intent.getStringExtra("query");
 
-            String q= query.substring(query.indexOf(" "));
-            search_bar.setText(q);
-            Log.d(String.valueOf(searchresult.this),query);
-            doMySearch(query);
+            String tag = queryWithFlag.split(" ")[0];
+            query = queryWithFlag.substring(queryWithFlag.indexOf(" ")+1,queryWithFlag.length());
+            search_bar.setText(query);
+            if(tag.equals("categories"))
+                column = columnName[0];
+            else
+                column = columnName[1];
+
+
+            applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
+           // Log.d(String.valueOf(searchresult.this),"column name = "+column);
         }
-      //  fetchDataOnScrolling();
-
+        fetchDataOnScrolling();
 
         sort_button = (Button) findViewById(R.id.sort_button);
         filter_button = (Button)findViewById(R.id.filter_button);
@@ -182,101 +189,22 @@ public class searchresult<async> extends AppCompatActivity {
             }
         });
 
-
-
         sort_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 sortItems();
             }
         });
 
 
-
-
-
-
-
-
     }
 
-    public  void doMySearch(String Query)
-    {
 
-        progressBar.setVisibility(View.VISIBLE);
-        String tag = Query.split(" ")[0];
-        String query = Query.split(" ")[1];
-        if(tag .equals("categories"))
-        {
-            categoryWiseViewModel.getItemByCategory("%"+query+"%").observe(this, new Observer<List<CategoryWiseItems>>() {
-                @Override
-                public void onChanged(List<CategoryWiseItems> categoryWiseItems1) {
-                   /* if(categoryWiseItems1.size()<limit && categoryWiseItems1.size()>0)
-                    {
-                        shouldLoad=false;
 
-                    }
-                   */
-                    if(categoryWiseItems1.size()==0)
-                    {
-                        recyclerView.setVisibility(View.GONE);
-                        emptyView.setVisibility(View.VISIBLE);
-                    }
-                    else
-                    {
-                        recyclerView.setVisibility(View.VISIBLE);
-                        emptyView.setVisibility(View.GONE);
-                    }
-
-                //    Log.d(String.valueOf(searchresult.this),"Size of category "+String.valueOf(categoryWiseItems1.size()));
-                   categoryWiseItems.clear();
-                    tempCategoryWiseItems.clear();
-                    categoryWiseItems.addAll( categoryWiseItems1);
-                    Log.d(String.valueOf(searchresult.this),"Size of category "+String.valueOf(categoryWiseItems.size()));
-                    tempCategoryWiseItems.addAll(categoryWiseItems1);
-                    adapter.notifyDataSetChanged();
-                    progressBar.setVisibility(View.GONE);
-
-                }
-            });
-        }
-        else {
-           // Log.d(String.valueOf(searchresult.this),"In Items items ");
-            categoryWiseViewModel.getItemByName("%" + query + "%").observe(this, new Observer<List<CategoryWiseItems>>() {
-                    @Override
-                    public void onChanged(@Nullable final List<CategoryWiseItems> categories) {
-                        // Update the cached copy of the words in the adapter.
-                     /*   if(categories.size()<limit && categories.size()>0)
-                        {
-                            shouldLoad=false;
-
-                        }
-                     */   if(categories.size()==0)
-                        {
-                            recyclerView.setVisibility(View.GONE);
-                            emptyView.setVisibility(View.VISIBLE);
-                        }
-                        else
-                        {
-                            recyclerView.setVisibility(View.VISIBLE);
-                            emptyView.setVisibility(View.GONE);
-                        }
-                        categoryWiseItems.clear();
-                        tempCategoryWiseItems.clear();
-                        categoryWiseItems.addAll(categories);
-                        tempCategoryWiseItems.addAll(categories);
-                        adapter.notifyDataSetChanged();
-                        progressBar.setVisibility(View.GONE);
-
-                    }
-                });
-            }
-
-       }
-
-      /* public void fetchDataOnScrolling()
+    public void fetchDataOnScrolling()
        {
+           Log.d(String.valueOf(searchresult.this),"Offset Value =  "+String.valueOf(offset));
+
 
            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                @Override
@@ -299,14 +227,13 @@ public class searchresult<async> extends AppCompatActivity {
                    {
                        loading=false;
                        offset+=limit;
-                       doMySearch(query,limit,offset);
-
+                       applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
                    }
                }
            });
 
        }
-*/
+
 
         public void sortItems()
         {
@@ -315,18 +242,24 @@ public class searchresult<async> extends AppCompatActivity {
             price_high = (RadioButton)sheetView.findViewById(R.id.price_high);
             relevance = (RadioButton)sheetView.findViewById(R.id.relevance);
             popularity = (RadioButton)sheetView.findViewById(R.id.popularity);
+            offset =0;
+            shouldLoad = true;
 
+         //   price_filters_list.clear();
+           // discount_filters_list.clear();
+            //rating_filters_list.clear();
+            //isStock_filters_list.clear();
 
             price_low.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onClick(View v) {
                     if(price_low.isChecked())
                     {
-                        sort_list_price_low_to_high();
-                     //   Toast.makeText(searchresult.this, "Price law", Toast.LENGTH_SHORT).show();
-                      //  price_low.setChecked(false);
-                       // relevance.setChecked(false);
+                        order = "ASC";
+                        categoryWiseItems.clear();
+
+                        sortColumnName = columnName[4];
+                        applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
                         bottomSheetDialog.dismiss();
                     }
                 }
@@ -339,15 +272,14 @@ public class searchresult<async> extends AppCompatActivity {
                 public void onClick(View v) {
                     if(price_high.isChecked())
                     {
-                        sort_list_price_high_to_low();
-                      //  Toast.makeText(searchresult.this, "Price high", Toast.LENGTH_SHORT).show();
-                      //  price_high.setChecked(false);
-                       // relevance.setChecked(false);
+                        order = "DESC";
+                        categoryWiseItems.clear();
+                        sortColumnName = columnName[4];
+                        applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
                         bottomSheetDialog.dismiss();
                     }
                 }
             });
-
 
             relevance.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
@@ -355,9 +287,12 @@ public class searchresult<async> extends AppCompatActivity {
                 public void onClick(View v) {
                     if(relevance.isChecked())
                     {
-                        sort_list_price_relevance();
-                      //  Toast.makeText(searchresult.this, "Relevance ", Toast.LENGTH_SHORT).show();
+                        order = "ASC";
+                        categoryWiseItems.clear();
+                        sortColumnName = columnName[6];
+                        applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
                         bottomSheetDialog.dismiss();
+
                     }
                 }
             });
@@ -368,13 +303,19 @@ public class searchresult<async> extends AppCompatActivity {
                 public void onClick(View v) {
                     if(popularity.isChecked())
                     {
-                        sort_list_price_popularity();
-                        //relevance.setChecked(false);
-                      //  Toast.makeText(searchresult.this, "Popularity", Toast.LENGTH_SHORT).show();
+                        order = "DESC";
+                        sortColumnName = columnName[3];
+                        categoryWiseItems.clear();
+
+                        // callFunctions();
+                        applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
+
                         bottomSheetDialog.dismiss();
                     }
                 }
             });
+
+         //   fetchDataOnScrolling();
 
 
             bottomSheetDialog.setContentView(sheetView);
@@ -383,43 +324,8 @@ public class searchresult<async> extends AppCompatActivity {
 
         }
 
-    public void sort_list_price_low_to_high()
-    {
-
-        Collections.sort(categoryWiseItems, compareByPrice);
-        adapter.notifyDataSetChanged();
-
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void sort_list_price_high_to_low()
-    {
-
-        Collections.sort(categoryWiseItems, compareByPrice.reversed());
-        adapter.notifyDataSetChanged();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void sort_list_price_popularity()
-    {
-
-        Collections.sort(categoryWiseItems, compareByPopularity.reversed());
-        adapter.notifyDataSetChanged();
-    }
-    public void sort_list_price_relevance()
-    {
-        categoryWiseItems.clear();
-        categoryWiseItems.addAll(tempCategoryWiseItems);
-        adapter.notifyDataSetChanged();
-    }
-
-
-
-    //filter Items
-
-    public  void filterItems()
-    {
-
+        public  void filterItems()
+        {
         price_filter = filterSheetView.findViewById(R.id.price_filter);
         discount_filter = filterSheetView.findViewById(R.id.discount_filter);
         avaliability_filter = filterSheetView.findViewById(R.id.avaliability_filter);
@@ -532,67 +438,61 @@ public class searchresult<async> extends AppCompatActivity {
             }
         });
 
-
-
-
-
         apply_filter.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
+                offset = 0;
+                isFiltered=true;
+                shouldLoad = true;
                 categoryWiseItems.clear();
-                categoryWiseItems.addAll(tempCategoryWiseItems);
+                price_filters_list.clear();
+                discount_filters_list.clear();
+                isStock_filters_list.clear();
+                rating_filters_list.clear();
 
                 if(below_250.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "below 250 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(0F,250F);
+                    Pair p = new Pair(0F,250F);
+                    price_filters_list.add(p);
                 }
                 if(between_251_500.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "between 251 to 500 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(251F,500F);
+                    Pair p = new Pair(251F,500F);
+                    price_filters_list.add(p);
 
                 }
-
                 if(between_501_1000.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "between 501 to 1000 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(501F,1000F);
+                    Pair p = new Pair(501F,1000F);
+                    price_filters_list.add(p);
 
                 }
-
                 if(between_1001_2000.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "between 1001 to 2000 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(1001F,2000F);
+                    Pair p = new Pair(1001F,2000F);
+                    price_filters_list.add(p);
 
                 }
 
                 if(between_2001_5000.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "between 2001 to 5000 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(2001F,5000F);
-
+                    Pair p = new Pair(2001F,5000F);
+                    price_filters_list.add(p);
                 }
 
                 if(between_5001_10000.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "between 5001 to 10000 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(5001F,10000F);
+                    Pair p = new Pair(5001F,10000F);
+                    price_filters_list.add(p);
 
                 }
                 if(above_10001.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "above 100001 ", Toast.LENGTH_SHORT).show();
-                    price_filter_list(10001F, Float.MAX_VALUE);
+                    Pair p = new Pair(10001F, Float.MAX_VALUE);
+                    price_filters_list.add(p);
+
                 }
 
 
@@ -601,46 +501,33 @@ public class searchresult<async> extends AppCompatActivity {
 
                 if(more_then_70.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "more then 70", Toast.LENGTH_SHORT).show();
-                    discount_filter_list(70F);
+                    discount_filters_list.add(70F);
 
                 }
                 if(more_then_60.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "more then 60", Toast.LENGTH_SHORT).show();
-                    discount_filter_list(60F);
+                    discount_filters_list.add(60F);
 
                 }
                 if(more_then_50.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "more then 50", Toast.LENGTH_SHORT).show();
-                    discount_filter_list(50F);
+                    discount_filters_list.add(50F);
 
                 }
                 if(more_then_40.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "more then 40", Toast.LENGTH_SHORT).show();
-                    discount_filter_list(40F);
+                    discount_filters_list.add(40F);
 
                 }
                 if(more_then_30.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "more then 30", Toast.LENGTH_SHORT).show();
-                    discount_filter_list(30F);
+                    discount_filters_list.add(30F);
 
                 }
 
                 if(below_30.isChecked())
                 {
-                    ischecked = true;
-                    dis_below_30 = true;
-                    Toast.makeText(searchresult.this, "below then 70", Toast.LENGTH_SHORT).show();
-                    discount_filter_list(30F);
+                    discount_filters_list.add(29F);
 
                 }
 
@@ -649,89 +536,59 @@ public class searchresult<async> extends AppCompatActivity {
 
                 if(above_1.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "above 1  rating", Toast.LENGTH_SHORT).show();
-                    rating_filter_list(1F);
+                    rating_filters_list.add(1F);
 
                 }
 
                 if(above_2.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "above 2  rating", Toast.LENGTH_SHORT).show();
-                    rating_filter_list(2F);
+                    rating_filters_list.add(2F);
 
                 }
 
                 if(above_3.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "above 3  rating", Toast.LENGTH_SHORT).show();
-                    rating_filter_list(3F);
+                    rating_filters_list.add(3F);
 
                 }
 
                 if(above_4.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "above 4  rating", Toast.LENGTH_SHORT).show();
-                    rating_filter_list(4F);
+                    rating_filters_list.add(4F);
 
                 }
 
                     //instock filters
                 if(exclude_out_of_stock.isChecked())
                 {
-                    ischecked = true;
-                    Toast.makeText(searchresult.this, "exclude out of stock", Toast.LENGTH_SHORT).show();
-                    exclude_out_of_stock_filter_list();
+                    isStock_filters_list.add(false);
+
                 }
 
-
-
-                Log.d(String.valueOf(searchresult.this), String.valueOf(filterCategoryItems.size()));
+                applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
                 bottomSheetDialogFilter.dismiss();
-                categoryWiseItems.clear();
+               // categoryWiseItems.clear();
 
-                if(ischecked)
-                {
-                    categoryWiseItems.addAll(filterCategoryItems);
-                    filterCategoryItems.clear();
-
-                }
-                else
-                {
-                    categoryWiseItems.addAll(tempCategoryWiseItems);
-
-                }
-                adapter.notifyDataSetChanged();
-                ischecked=false;
-                isPrice_filtered=false;
-                isDiscount_filtered=false;
-                isAvailiability_filtered=false;
-                isCustomoerRating_filtered=false;
-
-              //  map.clear();
             }
         });
 
         clear_filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bottomSheetDialogFilter.dismiss();
-                Toast.makeText(searchresult.this, "clear filters", Toast.LENGTH_SHORT).show();
-                categoryWiseItems.clear();
-                filterCategoryItems.clear();
-                categoryWiseItems.addAll(tempCategoryWiseItems);
-                adapter.notifyDataSetChanged();
-                ischecked=false;
-                allCheckBoxFalse();
-                isPrice_filtered=false;
-                isDiscount_filtered=false;
-                isAvailiability_filtered=false;
-                isCustomoerRating_filtered=false;
 
-                //  map.clear();
+                offset = 0;
+             //   isFiltered=false;
+                bottomSheetDialogFilter.dismiss();
+                categoryWiseItems.clear();
+                price_filters_list.clear();
+                discount_filters_list.clear();
+                rating_filters_list.clear();
+                isStock_filters_list.clear();
+                applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
+                //  applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
+                allCheckBoxFalse();
+              //  fetchDataOnScrolling();
+
             }
         });
 
@@ -742,109 +599,30 @@ public class searchresult<async> extends AppCompatActivity {
 
     }
 
-    public void price_filter_list(Float min_price,Float max_price)
+    public  void doMySearch(String Query,String column,String sortColumnName,String order,int limit,int offset)
     {
+        categoryWiseViewModel.getProductsFromDatabse("%"+Query+"%",column,sortColumnName,order,limit,offset).observe(this, new Observer<List<CategoryWiseItems>>() {
+            @Override
+            public void onChanged(List<CategoryWiseItems> categoryWiseItems1) {
 
-        if((isAvailiability_filtered) || (isDiscount_filtered) || (isCustomoerRating_filtered))
-        {
-            clearAll();
-        }
-        for(int i=0;i<categoryWiseItems.size();i++)
-        {
-            CategoryWiseItems cartModel = categoryWiseItems.get(i);
-            Float price = cartModel.getPrice_with_discount();
-
-            if((price>=min_price) && (price<=max_price))
-            {
-               // map.put(i,1);
-                filterCategoryItems.add(cartModel);
+                fetchDataFromRoom(categoryWiseItems1,limit,offset);
             }
-
-        }
-        isPrice_filtered=true;
-
-    }
-
-    public void discount_filter_list(Float discount)
-    {
-
-
-        if((isAvailiability_filtered) || (isPrice_filtered) || (isCustomoerRating_filtered))
-        {
-           clearAll();
-        }
-
-        for(int i=0;i<categoryWiseItems.size();i++)
-        {
-            CategoryWiseItems cartModel = categoryWiseItems.get(i);
-            Float discount1 = cartModel.getDiscount();
-
-            if(dis_below_30)
-            {
-                if((discount1<=discount))
-                {
-                  //  map.put(i,1);
-                    filterCategoryItems.add(cartModel);
-                }
-            }
-            else if((discount1>=discount))
-            {
-              //  map.put(i,1);
-                filterCategoryItems.add(cartModel);
-            }
-
-        }
-        dis_below_30=false;
-        isDiscount_filtered=true;
-
+        });
     }
 
 
-
-    public  void rating_filter_list(Float rating)
+    public  void applyFilters(String Query,List<Pair<Float,Float>> price_filters,List<Float> discount_filters,List<Float> rating_filters,List<Boolean> isStockFilters,String column,String sortColumnName,String order,int limit,int offset)
     {
+        categoryWiseViewModel.applyFilters("%"+Query+"%",price_filters,discount_filters,rating_filters,isStockFilters,column,sortColumnName,order,limit,offset).observe(this, new Observer<List<CategoryWiseItems>>() {
+            @Override
+            public void onChanged(List<CategoryWiseItems> categoryWiseItems1) {
 
-        if((isAvailiability_filtered) || (isDiscount_filtered) || (isPrice_filtered))
-        {
-            clearAll();
-        }
-
-        for(int i=0;i<categoryWiseItems.size();i++)
-        {
-            CategoryWiseItems cartModel = categoryWiseItems.get(i);
-            Float item_rating = cartModel.getRating();
-            if((item_rating>=rating))
-            {
-            //    map.put(i,1);
-                filterCategoryItems.add(cartModel);
+                fetchDataFromRoom(categoryWiseItems1,limit,offset);
             }
-
-        }
-        isCustomoerRating_filtered=true;
-
+        });
     }
 
-    public void exclude_out_of_stock_filter_list()
-    {
-        if((isCustomoerRating_filtered) || (isDiscount_filtered) || (isPrice_filtered))
-        {
-            clearAll();
-        }
 
-        for(int i=0;i<categoryWiseItems.size();i++)
-        {
-            CategoryWiseItems cartModel = categoryWiseItems.get(i);
-            boolean instock = cartModel.isIn_stock();
-            if((instock))
-            {
-                //map.put(i,1);
-                filterCategoryItems.add(cartModel);
-            }
-
-        }
-        isAvailiability_filtered=true;
-
-    }
 
     public void allCheckBoxFalse()
     {
@@ -853,13 +631,54 @@ public class searchresult<async> extends AppCompatActivity {
 
     }
 
-    public void clearAll()
+    public void fetchDataFromRoom(List<CategoryWiseItems> Items,int limit,int offset)
     {
-        categoryWiseItems.clear();
-        categoryWiseItems.addAll(filterCategoryItems);
-        filterCategoryItems.clear();
-   //     map.clear();
-    }
 
+        Log.d(String.valueOf(searchresult.this),"Size of category  = "+String.valueOf(Items.size()));
+        if(Items.size()<limit)
+        {
+            shouldLoad=false;
+
+        }
+        int index = offset;
+        for(int i=0;i<Items.size();i++)
+        {
+            if(categoryWiseItems.size()>=index)
+            {
+                categoryWiseItems.add(Items.get(i));
+            }
+            else
+            {
+                categoryWiseItems.set(index,Items.get(i));
+            }
+            index++;
+        }
+        if(Items.size()==0 && categoryWiseItems.size()==0)
+        {
+            recyclerView.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+        adapter.notifyDataSetChanged();
+
+    }
+    /*public void callFunctions()
+    {
+        if(isFiltered)
+        {
+            applyFilters(query,price_filters_list,discount_filters_list,rating_filters_list,isStock_filters_list,column,sortColumnName,order,limit,offset);
+
+        }
+        else
+        {
+            doMySearch(query,column,sortColumnName,order,limit,offset);
+
+        }
+    }
+*/
 
 }

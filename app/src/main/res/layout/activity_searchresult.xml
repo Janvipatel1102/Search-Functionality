@@ -99,13 +99,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_result_list"
-        android:layout_below="@+id/sort_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_navigation_view_linear"
+        android:layout_below="@+id/sort_filter"
         android:layout_marginTop="10dp"
         tools:ignore="MissingConstraints"
-        tools:listitem="@layout/result_item"
-        >
+        tools:listitem="@layout/result_item">
 
     </androidx.recyclerview.widget.RecyclerView>
 

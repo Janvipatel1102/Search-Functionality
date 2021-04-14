@@ -18,14 +18,13 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = Constants.CATEGORIESWISE_TABLE_NAME)
 public class CategoryWiseItems {
 
-    @PrimaryKey(autoGenerate =   true)
-    private Integer id;
+    @NonNull
+    @PrimaryKey
+    private String item_id;
 
     @ColumnInfo(name = "price_with_discount")
     private Float price_with_discount;
 
-    @ColumnInfo(name = "item_id")
-    private String item_id;
 
     @ColumnInfo(name = "item_name")
     private String item_name;
@@ -51,6 +50,7 @@ public class CategoryWiseItems {
 
     @ColumnInfo(name = "in_stock")
     private boolean in_stock;
+
 
     public boolean isIn_stock() {
         return in_stock;
@@ -82,10 +82,6 @@ public class CategoryWiseItems {
     }
 
     @NonNull
-    public Integer getId() {
-        return id;
-    }
-
     public Float getPrice_with_discount() {
         return price_with_discount;
     }
@@ -113,9 +109,6 @@ public class CategoryWiseItems {
     }
 
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getItem_name() {
         return item_name;

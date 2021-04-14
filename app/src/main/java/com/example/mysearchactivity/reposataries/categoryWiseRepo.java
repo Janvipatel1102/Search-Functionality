@@ -9,10 +9,13 @@ import com.example.mysearchactivity.persistant.categoryDatabase;
 import com.example.mysearchactivity.persistant.categoryWiseDao;
 import com.example.mysearchactivity.persistant.categoryWiseDatabase;
 
+import java.nio.channels.FileLock;
 import java.util.Currency;
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
+import androidx.sqlite.db.SupportSQLiteQuery;
+
 public class categoryWiseRepo<firebaseDatabase> {
 
     private categoryWiseDao mcategoryWiseDao;
@@ -30,14 +33,6 @@ public class categoryWiseRepo<firebaseDatabase> {
     public LiveData<List<CategoryWiseItems>> getmAllCategoryWiseItems() {
         return mAllCategoryWiseItems;
     }
-    public LiveData<List<CategoryWiseItems>> getItemByName(String query) {
-        nameWiseItems  = mcategoryWiseDao.getItemByName(query);
-        return  nameWiseItems;
-    }
-    public LiveData<List<CategoryWiseItems>> getItemByCategories(String query) {
-         mItemByCategory  = mcategoryWiseDao.getItemByCategories(query);
-        return  mItemByCategory;
-    }
 
     public LiveData<List<String>> getNameByName(String query) {
         return mcategoryWiseDao.getNameByName(query);
@@ -49,6 +44,26 @@ public class categoryWiseRepo<firebaseDatabase> {
     public void insert (CategoryWiseItems CategoryWiseItems) {
         new insertAsyncTask(mcategoryWiseDao).execute(CategoryWiseItems);
     }
+
+    public void delete (CategoryWiseItems CategoryWiseItems) {
+        new insertAsyncTask(mcategoryWiseDao).execute(CategoryWiseItems);
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<CategoryWiseItems, Void, Void> {
+
+        private categoryWiseDao mAsyncTaskDao;
+
+        deleteAsyncTask(categoryWiseDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final CategoryWiseItems... params) {
+            mAsyncTaskDao.deleteCatogoryWiseItem(params[0]);
+            return null;
+        }
+    }
+
 
     private static class insertAsyncTask extends AsyncTask<CategoryWiseItems, Void, Void> {
 
@@ -86,6 +101,47 @@ public class categoryWiseRepo<firebaseDatabase> {
             return null;
         }
     }
+
+    public void deleteByCategoryName (String categoey_name) {
+
+        new deleteByCategoryNameAsync(mcategoryWiseDao).execute(categoey_name);
+    }
+
+    private static class deleteByCategoryNameAsync extends AsyncTask<String, Void, Void> {
+
+        private categoryWiseDao mAsyncTaskDao;
+
+        deleteByCategoryNameAsync(categoryWiseDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+
+        @Override
+        protected Void doInBackground(String...category_name) {
+            mAsyncTaskDao.deleteByCategoryName(category_name[0]);
+            return null;
+        }
+    }
+
+
+    //get data from database;
+    public LiveData<List<CategoryWiseItems>> getProductsFromDatabse(SupportSQLiteQuery query) {
+        return mcategoryWiseDao.getProductsFromDatabse(query);
+    }
+
+
+    LiveData<List<CategoryWiseItems>> sortProducts(SupportSQLiteQuery query)
+    {
+     return mcategoryWiseDao.sortProducts(query);
+    }
+
+    public LiveData<List<CategoryWiseItems>> filterProducts(SupportSQLiteQuery query)
+    {
+        return mcategoryWiseDao.filterProducts(query);
+    }
+
+
+
 
 
 }
