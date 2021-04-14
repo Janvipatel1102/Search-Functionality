@@ -245,10 +245,6 @@ public class searchresult<async> extends AppCompatActivity {
             offset =0;
             shouldLoad = true;
 
-         //   price_filters_list.clear();
-           // discount_filters_list.clear();
-            //rating_filters_list.clear();
-            //isStock_filters_list.clear();
 
             price_low.setOnClickListener(new View.OnClickListener() {
                 @Override

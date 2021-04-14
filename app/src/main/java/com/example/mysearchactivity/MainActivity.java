@@ -128,85 +128,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        CategoryWiseItems category = new CategoryWiseItems("1","1", 12F,"10",1F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,10F,true);
-
-
-        CategoryWiseItems category1 = new CategoryWiseItems("2","2", 11F,"10",2F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,11F,true);
-
-        CategoryWiseItems category2 = new CategoryWiseItems("3","3", 11F,"102",4F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,124F,true);
-
-        CategoryWiseItems category3 = new CategoryWiseItems("4","4", 11F,"102",5F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,5F,true);
-        CategoryWiseItems category4 = new CategoryWiseItems("5","5", 11F,"102",2F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,100F,true);
-        CategoryWiseItems category5 = new CategoryWiseItems("5","6", 11F,"102",5F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,200F,true);
-
-        CategoryWiseItems category6 = new CategoryWiseItems("6","7", 11F,"102",3F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,300F,true);
-
-        CategoryWiseItems category8 = new CategoryWiseItems("hello8","8", 11F,"10",2F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,2F,true);
-
-        CategoryWiseItems category10 = new CategoryWiseItems("hello10","9", 11F,"102",1F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,20F,true);
-
-        CategoryWiseItems category11 = new CategoryWiseItems("hello11","10", 11F,"10",3F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,30F,true);
-
-        CategoryWiseItems category9 = new CategoryWiseItems("hello9","11", 11F,"10",5F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,12.34F,true);
-        CategoryWiseItems category7 = new CategoryWiseItems("hello17","12", 11F,"1230",1F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,100F,true);
-
-     /*   CategoryWiseItems category13 = new CategoryWiseItems("hello13","janvi", 11F,"1030",5F,"1200",
-                "Fruits & Vegetables",
-                " https://firebasestorage.googleapis.com/v0/b/tiwari-mart.appspot.com/o/category_images%2FFoodgrains%2C%20Oil%20%26%20Masala%2FFoodgrains-Oil-Masala-1-min.png?alt=media&token=8d2107e8-fe47-4971-851d-dd8684861db9"
-                ,12.34F,true);
-*/
-
-
-        mcategoryWiseViewModel.insert(category);
-        mcategoryWiseViewModel.insert(category1);
-        mcategoryWiseViewModel.insert(category2);
-        mcategoryWiseViewModel.insert(category3);
-        mcategoryWiseViewModel.insert(category4);
-        mcategoryWiseViewModel.insert(category5);
-        mcategoryWiseViewModel.insert(category6);
-        mcategoryWiseViewModel.insert(category8);
-
-        mcategoryWiseViewModel.insert(category9);
-        mcategoryWiseViewModel.insert(category10);
-        mcategoryWiseViewModel.insert(category11);
-        mcategoryWiseViewModel.insert(category7);
-     //   mcategoryWiseViewModel.insert(category13);
 
 
 
@@ -347,7 +268,8 @@ public class MainActivity extends AppCompatActivity {
 
             Float discount1 = Float.valueOf(discount);
             Float price1 = Float.valueOf(price);
-            Float price_with_discount = price1 - ((price1*discount1)/100);
+            Float price_with_discount = Float.valueOf(String.format("%.0f",price1 - ((price1*discount1)/100)));
+
 
             CategoryWiseItems category = new CategoryWiseItems(item_id,name, discount,ratingCount,rating,price,category_of_item,image,price_with_discount,in_stock);
             mcategoryWiseViewModel.insert(category);
